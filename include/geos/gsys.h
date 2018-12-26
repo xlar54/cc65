@@ -14,6 +14,7 @@ void MainLoop(void);
 void EnterDeskTop(void);
 void ToBASIC(void);
 void Panic(void);
+void RestoreApplication(void);
 
 void __fastcall__ CallRoutine(void *myRoutine);
 

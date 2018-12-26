@@ -447,6 +447,9 @@ static void DoHeader (void)
             case 1:
                 myHead.geostype = 14;
                 break;
+            case 2:
+                myHead.geostype = 5;
+                break;
             default:
                 AbEnd ("Filetype '%s' is not supported yet", token);
         }
@@ -586,8 +589,7 @@ static void DoHeader (void)
             "\t.word %i << 9 | %i << 5 | %i, %i << 8 | %i\n"
             "\t.word 0\n\n",
             myHead.geostype,
-            myHead.structure == 0 ?
-                "__VLIR0_LAST__ - __VLIR0_START__ - __BSS_SIZE__" : "0",
+            myHead.structure == 0 ? "__VLIR0_LAST__ - __VLIR0_START__ - __BSS_SIZE__" : "0",
             myHead.year, myHead.month, myHead.day, myHead.hour, myHead.min,
             myHead.year, myHead.month, myHead.day, myHead.hour, myHead.min);
 
@@ -628,10 +630,26 @@ static void DoHeader (void)
         }
     }
 
-    fprintf (outputSFile,
-        "\t.byte %i, %i, %i\n"
-        "\t.word __VLIR0_START__, __VLIR0_START__ - 1, __STARTUP_RUN__\n\n",
-        myHead.dostype, myHead.geostype, myHead.structure);
+    switch(myHead.geostype)
+    {
+        case 5:
+        {
+            fprintf (outputSFile,
+                "\t.byte %i, %i, %i\n"
+                "\t.word __VLIR0_START__, $5fff, __STARTUP_RUN__\n\n",
+                myHead.dostype, myHead.geostype, myHead.structure);
+            break;
+        }
+        case 6:
+        {
+            fprintf (outputSFile,
+                "\t.byte %i, %i, %i\n"
+                "\t.word __VLIR0_START__, __VLIR0_START__ - 1, __STARTUP_RUN__\n\n",
+                myHead.dostype, myHead.geostype, myHead.structure);
+            break;
+        }
+    }
+    
 
     fillOut (myHead.classname, 12, "$20");
 
